@@ -1,0 +1,33 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model Tariff {
+  id           Int        @id @default(autoincrement())
+  serviceName  String
+  pricePerM2   Float
+  minimalPrice Float      @default(0)
+  description  String?
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+
+  // Tarif o'zgarishlar tarixini saqlash
+  history      TariffHistory[]
+}
+
+model TariffHistory {
+  id           Int       @id @default(autoincrement())
+  tariffId     Int
+  oldPrice     Float
+  newPrice     Float
+  changedAt    DateTime  @default(now())
+
+  tariff       Tariff    @relation(fields: [tariffId], references: [id])
+}
