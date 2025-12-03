@@ -9,17 +9,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id         Int       @id @default(autoincrement())
+  telegramId String    @unique
+  phone      String?
+  fullName   String?
+  createdAt  DateTime  @default(now())
+
+  orders     Order[]
+}
+
+model Order {
+  id          Int          @id @default(autoincrement())
+  userId      Int?
+  address     String?
+  fullName    String?
+  phone       String?
+  comment     String?
+  status      OrderStatus  @default(PENDING)
+  createdAt   DateTime     @default(now())
+
+  user        User?        @relation(fields: [userId], references: [id])
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id         Int     @id @default(autoincrement())
+  orderId    Int
+  tariffId   Int
+  area       Float
+  price      Float
+
+  order      Order   @relation(fields: [orderId], references: [id])
+  tariff     Tariff  @relation(fields: [tariffId], references: [id])
+}
+
+
 model Tariff {
-  id           Int        @id @default(autoincrement())
+  id           Int             @id @default(autoincrement())
   serviceName  String
   pricePerM2   Float
-  minimalPrice Float      @default(0)
   description  String?
-  isActive     Boolean    @default(true)
-  createdAt    DateTime   @default(now())
+  isActive     Boolean         @default(true)
+  createdAt    DateTime        @default(now())
 
-  // Tarif o'zgarishlar tarixini saqlash
   history      TariffHistory[]
+  orderItems   OrderItem[]
 }
 
 model TariffHistory {
@@ -30,4 +65,11 @@ model TariffHistory {
   changedAt    DateTime  @default(now())
 
   tariff       Tariff    @relation(fields: [tariffId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING     // buyurtma qo‘yilgan
+  PROCESSING  // ishlanmoqda
+  DONE        // bajarilgan
+  CANCELLED   // bekor qilingan
 }

@@ -18,11 +18,7 @@ export class CreateTariffDto {
   @Min(0)
   pricePerM2: number;
 
-  @ApiPropertyOptional({ description: 'Minimal narx (default 0)', minimum: 0 })
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  minimalPrice?: number;
+
 
   @ApiPropertyOptional({ description: 'Tarif tavsifi' })
   @IsString()

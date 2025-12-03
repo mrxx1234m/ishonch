@@ -15,7 +15,6 @@ export class TariffService {
     const data = {
       serviceName: createTariffDto.serviceName,
       pricePerM2: createTariffDto.pricePerM2,
-      minimalPrice: createTariffDto.minimalPrice ?? 0,
       description: createTariffDto.description,
       isActive: createTariffDto.isActive ?? true,
     };
